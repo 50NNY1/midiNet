@@ -1,22 +1,24 @@
 import tkinter as tk
 from tkinter import filedialog, Text
-from playsound import playsound
 from functools import partial
-import numpy
-import pyaudio
+from pydub import AudioSegment
+from pydub.playback import play
 import os
 
 # import sound files and load into unique functions
 sounds = []
 for i in range(13):
-    sounds.append(f'./key_sounds/{i+1}.wav')
+    sounds.append(f'key_sounds/{i+1}.wav')
     print(i)
 
-# play note function
+for i in range(len(sounds)):
+    print(sounds[i])
 
 
 def playnote(url):
-    playsound(url)
+    print(url)
+    sound = AudioSegment.from_wav(url)
+    play(sound)
 
 
 # dict of various note functions (must be initalised as so, cannot pass arguements through button command)
