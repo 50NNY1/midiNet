@@ -16,9 +16,18 @@ for filename in os.listdir('key_sounds'):
 
 
 # play note function
+def playnote(url):
+    playsound(url)
 
+
+# dict of various note functions (must be initalised as so, cannot pass arguements through button command)
+notefuncs = {f'note{i}': partial(
+    playnote, url=sounds[i]) for i in range(len(sounds))}
+
+# build gui
 root = tk.Tk()
+c3 = tk.Button(root, text="c3", command=notefuncs['note0'])
+c3.grid()
+c3.pack()
+
 root.mainloop()
-playsound(sounds[0])
-playsound(sounds[3])
-playsound(sounds[7])
