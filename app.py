@@ -8,14 +8,13 @@ import os
 
 # import sound files and load into unique functions
 sounds = []
-for filename in os.listdir('key_sounds'):
-    if filename != '.DS_Store':
-        f = os.path.join('key_sounds', filename)
-        if os.path.isfile(f):
-            sounds.append(f)
-
+for i in range(13):
+    sounds.append(f'./key_sounds/{i+1}.wav')
+    print(i)
 
 # play note function
+
+
 def playnote(url):
     playsound(url)
 
@@ -27,7 +26,31 @@ notefuncs = {f'note{i}': partial(
 # build gui
 root = tk.Tk()
 c3 = tk.Button(root, text="c3", command=notefuncs['note0'])
-c3.grid()
-c3.pack()
+csharp3 = tk.Button(root, text="c#3", command=notefuncs['note1'])
+d3 = tk.Button(root, text="d3", command=notefuncs['note2'])
+dsharp3 = tk.Button(root, text="d#3", command=notefuncs['note3'])
+e3 = tk.Button(root, text="e3", command=notefuncs['note4'])
+f3 = tk.Button(root, text="f3", command=notefuncs['note5'])
+fsharp3 = tk.Button(root, text="f#3", command=notefuncs['note6'])
+g3 = tk.Button(root, text="g3", command=notefuncs['note7'])
+gsharp3 = tk.Button(root, text="g#3", command=notefuncs['note8'])
+a3 = tk.Button(root, text="a3", command=notefuncs['note9'])
+asharp3 = tk.Button(root, text="a#3", command=notefuncs['note10'])
+b3 = tk.Button(root, text="b3", command=notefuncs['note11'])
+c4 = tk.Button(root, text="c4", command=notefuncs['note12'])
+
+c3.grid(row=0, column=0)
+csharp3.grid(row=0, column=1)
+d3.grid(row=0, column=2)
+dsharp3.grid(row=0, column=3)
+e3.grid(row=0, column=4)
+f3.grid(row=0, column=5)
+fsharp3.grid(row=0, column=6)
+g3.grid(row=0, column=7)
+gsharp3.grid(row=0, column=8)
+a3.grid(row=0, column=9)
+asharp3.grid(row=0, column=10)
+b3.grid(row=0, column=11)
+c4.grid(row=0, column=12)
 
 root.mainloop()
