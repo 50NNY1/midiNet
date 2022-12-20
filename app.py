@@ -1,6 +1,7 @@
 import tkinter as tk
 from tkinter import filedialog, Text
 from functools import partial
+from typing import List
 from pydub import AudioSegment
 from pydub.playback import play
 import os
@@ -27,9 +28,32 @@ notefuncs = {f'note{i}': partial(
 # build gui
 root = tk.Tk()
 
+
+state = {'buttons': [], 'button_values': [
+    [False for i in range(8)] for j in range(len(sounds))]}
+
+
+def create_button(row, col):
+    def toggle_button():
+        state['button_values'][row][col] = not state['button_values'][row][col]
+        if state['button_values'][row][col]:
+            state['buttons'][row][col].config(bg='green')
+        else:
+            state['buttons'][row][col].config(bg='red')
+        notefuncs[f'note{row}']()
+    return tk.Button(root, text=notes[row],
+                     command=toggle_button, bg='white')
+
+
 for i in range(8):
+    button_row = []
     for j in range(len(sounds)):
-        tk.Button(root, text=notes[j], command=notefuncs[f'note{j}']).grid(
-            row=j, column=i)
+        button = create_button(j, i)
+        button.grid(row=j, column=i)
+        button_row.append(button)
+    state['buttons'].append(button_row)
+    # buttons.append(tk.Button(root, text=notes[j], command=notefuncs[f'note{j}']).grid(
+    #     row=j, column=i))
+
 
 root.mainloop()
