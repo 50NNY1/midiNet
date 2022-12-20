@@ -6,16 +6,20 @@ from pydub.playback import play
 import os
 
 # import sound files and load into unique functions
-sounds = []
+urls = []
+audiosegments = {}
 for i in range(13):
-    sounds.append(f'key_sounds/{i+1}.wav')
-    print(i)
+    urls.append(f'key_sounds/{i+1}.wav')
+# load audio in before user interaction
+for i in range(len(urls)):
+    audiosegments["sound{0}".format(i)] = AudioSegment.from_wav(
+        urls[i])
+playfuncs = {f'play{i}': partial(
+    play(audiosegments[f'sound{i}']) for i in range(len(audiosegments)))}
 
-
-def playnote(url):
-    print(url)
-    sound = AudioSegment.from_wav(url)
-    play(sound)
+# for i in range(len(audiosegments)):
+#     playfuncs["play{0}".format(i)] = play(
+#         audiosegments[f'sound{i}'])
 
 
 notes = ["c3", "c#3", "d3", "d#3", "e3", "f3",
@@ -23,15 +27,15 @@ notes = ["c3", "c#3", "d3", "d#3", "e3", "f3",
 
 
 # dict of various note functions (must be initalised as so, cannot pass arguements through button command)
-notefuncs = {f'note{i}': partial(
-    playnote, url=sounds[i]) for i in range(len(sounds))}
+callnote = {f'note{i}': partial(
+    playfuncs[f'play{i}']) for i in range(len(audiosegments))}
 
 # build gui
 root = tk.Tk()
 
 for i in range(8):
-    for j in range(len(sounds)):
-        tk.Button(root, text=notes[j], command=notefuncs[f'note{j}']).grid(
+    for j in range(len(urls)):
+        tk.Button(root, text=notes[j], command=callnote[f'note{j}']).grid(
             row=j, column=i)
 
 root.mainloop()
