@@ -57,30 +57,30 @@ for i in range(8):
     state['buttons'].append(button_row)
     
 #sequencer parameters
-#param_col = len(sounds)+1
-#bpm_label = Label(root, text="BPM")
-#bpm_label.grid(row=0, column=param_col)
-#bpm_box = Entry(root)
-#bpm_box.grid(row=1, column=param_col)
-#play = Button(root, text="play")
-#play.grid(row=2, column=param_col)
-#stop = Button(root, text="stop")
-#stop.grid(row=3, column=param_col)
-#
-##bit of extra code required for the NN button as it needs to be toggleable
-#global nn_state
-#nn_state = False
-#def nn_toggle():
-#    if not nn_state: 
-#        nn.config(image=on)
-#        nn_state = True
-#        #run predict here
-#    elif nn_state:
-#        nn.config(image=off)
-#        nn_state = False
-#nn = Button(root, text="neural net", command=nn_toggle, 
-#            bg="white", image=off, compound=LEFT, bd=0)
-#nn.grid(row=4, column=param_col)
+param_col = len(sounds)+1
+bpm_label = Label(root, text="BPM")
+bpm_label.grid(row=0, column=param_col)
+bpm_box = Entry(root)
+bpm_box.grid(row=1, column=param_col)
+play_button = Button(root, text="play")
+play_button.grid(row=2, column=param_col)
+stop_button = Button(root, text="stop")
+stop_button.grid(row=3, column=param_col)
+
+#bit of extra code required for the NN button as it needs to be toggleable
+global nn_state
+nn_state = False
+def nn_toggle():
+    if not nn_state: 
+        nn.config(image=on)
+        nn_state = True
+        #run predict here
+    elif nn_state:
+        nn.config(image=off)
+        nn_state = False
+nn = Button(root, text="neural net", command=nn_toggle, 
+            bg="white", image=off, compound=LEFT, bd=0)
+nn.grid(row=4, column=param_col)
 
 #render graphics             
 root.mainloop()
