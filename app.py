@@ -36,15 +36,14 @@ state = {'buttons': [], 'button_values': [
 
 def create_button(row, col):
     def toggle_button():
-        state['button_values'][row][col] = not state['button_values'][row][col]
         if state['button_values'][row][col]:
-           state['buttons'][row][col].config(image=off) 
+            state['buttons'][col][row].config(image=off) 
         else:
-           notefuncs[f'note{row}']()
-           state['buttons'][row][cow].config(image=on)
+            notefuncs[f'note{row}']()
+            state['buttons'][col][row].config(image=on)
     return tk.Button(root, text=notes[row],
                      command=toggle_button, bg='white', 
-                     image=on, compound=LEFT, bd=0)
+                     image=off, compound=LEFT, bd=0)
 
 
 for i in range(8):
