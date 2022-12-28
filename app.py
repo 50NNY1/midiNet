@@ -25,8 +25,8 @@ notefuncs = {f'note{i}': partial(
     playnote, url=sounds[i]) for i in range(len(sounds))}
 
 #dict to store buttons and button states (on or off)
-state = {'buttons': [], 'button_values': [
-    [False for i in range(8)] for j in range(len(sounds))]}
+state = {'buttons': [], 'button_values': [[
+    False for i in range(len(sounds))]for i in range(8)]}
 
 # build gui
 root = tk.Tk()
