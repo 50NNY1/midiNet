@@ -52,8 +52,8 @@ for i in range(8):
         button.grid(row=j, column=i)
         button_row.append(button)
     state['buttons'].append(button_row)
-    # buttons.append(tk.Button(root, text=notes[j], command=notefuncs[f'note{j}']).grid(
-    #     row=j, column=i))
+   # buttons.append(tk.Button(root, text=notes[j], command=notefuncs[f'note{j}']).grid(
+   #    row=j, column=i))
 
 
 root.mainloop()
