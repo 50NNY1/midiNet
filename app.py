@@ -1,5 +1,5 @@
 import tkinter as tk
-from tkinter import filedialog, Text
+from tkinter import *
 from functools import partial
 from typing import List
 from pydub import AudioSegment
@@ -27,7 +27,8 @@ notefuncs = {f'note{i}': partial(
 
 # build gui
 root = tk.Tk()
-
+on = PhotoImage(file="images/on.png")
+off = PhotoImage(file="images/off.png")
 
 state = {'buttons': [], 'button_values': [
     [False for i in range(8)] for j in range(len(sounds))]}
@@ -37,12 +38,13 @@ def create_button(row, col):
     def toggle_button():
         state['button_values'][row][col] = not state['button_values'][row][col]
         if state['button_values'][row][col]:
-            state['buttons'][row][col].config(bg='green')
+           state['buttons'][row][col].config(image=off) 
         else:
-            state['buttons'][row][col].config(bg='red')
-        notefuncs[f'note{row}']()
+           notefuncs[f'note{row}']()
+           state['buttons'][row][cow].config(image=on)
     return tk.Button(root, text=notes[row],
-                     command=toggle_button, bg='white')
+                     command=toggle_button, bg='white', 
+                     image=on, compound=LEFT, bd=0)
 
 
 for i in range(8):
