@@ -10,8 +10,8 @@ import os
 sounds = []
 for i in range(13):
     sounds.append(f'key_sounds/{i+1}.wav')
-
-
+for i in range(len(sounds)):
+    print(sounds[i])
 def playnote(url):
     sound = AudioSegment.from_wav(url)
     play(sound)
@@ -68,16 +68,17 @@ stop_button = Button(root, text="stop")
 stop_button.grid(row=3, column=param_col)
 
 #bit of extra code required for the NN button as it needs to be toggleable
-global nn_state
 nn_state = False
 def nn_toggle():
-    if not nn_state: 
-        nn.config(image=on)
-        nn_state = True
-        #run predict here
-    elif nn_state:
+    global nn_state
+    if(nn_state):
         nn.config(image=off)
         nn_state = False
+    elif(not nn_state):
+        nn.config(image=on)
+        nn_state = True
+        #call predict here!
+        
 nn = Button(root, text="neural net", command=nn_toggle, 
             bg="white", image=off, compound=LEFT, bd=0)
 nn.grid(row=4, column=param_col)
