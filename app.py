@@ -30,6 +30,26 @@ state = {'buttons': [], 'button_values': [[
 
 #timer functions for sequencing
 step = 0
+currentstep = []
+def step1():
+    stepmarker.grid(row=len(sounds)+1,column=0)
+def step2():
+    stepmarker.grid(row=len(sounds)+1,column=1)
+def step3():
+    stepmarker.grid(row=len(sounds)+1,column=2)
+def step4():
+    stepmarker.grid(row=len(sounds)+1,column=3)
+def step5():
+    stepmarker.grid(row=len(sounds)+1,column=4)
+def step6():
+    stepmarker.grid(row=len(sounds)+1,column=5)
+def step7():
+    stepmarker.grid(row=len(sounds)+1,column=6)
+def step8():
+    stepmarker.grid(row=len(sounds)+1,column=7)
+
+stepfunctions =[step1,step2,step3,step4,step5,step6,step7,step8]
+
 def starttimer(first=True):
     global step
     if first:
@@ -38,9 +58,9 @@ def starttimer(first=True):
         step = 0
     if play_button['state'] == tk.DISABLED:
         step += 1
-        print(step)
         if step == 8:
             step = 0
+        stepfunctions[step-1]()
         play_button.after(500, starttimer, False)
 def stoptimer():
     global step
@@ -50,7 +70,7 @@ def stoptimer():
 root = tk.Tk()
 on = PhotoImage(file="images/on.png")
 off = PhotoImage(file="images/off.png")
-
+marker = PhotoImage(file="images/step.png")
 #button constructor (without classes, as we are using a dict to manage instances)
 def create_button(row, col):
     def toggle_button():
@@ -84,6 +104,8 @@ play_button= Button(root, text="stop/start", command=starttimer)
 play_button.grid(row=2, column=param_col)
 stop_button= Button(root, text="stop", command=stoptimer)
 stop_button.grid(row=3, column=param_col)
+stepmarker = Label(image=marker)
+stepmarker.grid(row=len(sounds)+1, column=0)
 #bit of extra code required for the NN button as it needs to be toggleable
 nn_state = False
 def nn_toggle():
