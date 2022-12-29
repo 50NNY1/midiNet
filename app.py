@@ -1,15 +1,15 @@
-import tkinter as tk
-from tkinter import *
-from functools import partial
-from typing import List
-from pydub import AudioSegment
+import tkinter as tk 
+from tkinter import * 
+from functools import partial 
+from typing import List 
+from pydub import AudioSegment 
 from pydub.playback import play
 import os
-
+import time
 # import sound files and load into unique functions
 sounds = []
-for i in range(13):
-    sounds.append(f'key_sounds/{i+1}.wav')
+for i in range(8):
+    sounds.append(f'drum_sounds/{i+1}.wav')
 for i in range(len(sounds)):
     print(sounds[i])
 def playnote(url):
@@ -18,7 +18,7 @@ def playnote(url):
 
 #notes array, for labelling buttons
 notes = ["c3", "c#3", "d3", "d#3", "e3", "f3",
-         "f#3", "g3", "g#3", "a3", "a#3", "b3", "c4"]
+         "f#3", "g3"]
 
 # dict of various note functions (must be initalised as so, cannot pass arguements through button command)
 notefuncs = {f'note{i}': partial(
@@ -28,6 +28,24 @@ notefuncs = {f'note{i}': partial(
 state = {'buttons': [], 'button_values': [[
     False for i in range(len(sounds))]for i in range(8)]}
 
+#timer functions for sequencing
+step = 0
+def starttimer(first=True):
+    global step
+    if first:
+        play_button['state'] = tk.DISABLED
+        play_button.update_idletasks()
+        step = 0
+    if play_button['state'] == tk.DISABLED:
+        step += 1
+        print(step)
+        if step == 8:
+            step = 0
+        play_button.after(500, starttimer, False)
+def stoptimer():
+    global step
+    play_button['state'] = tk.NORMAL
+    step = 0
 # build gui
 root = tk.Tk()
 on = PhotoImage(file="images/on.png")
@@ -40,9 +58,9 @@ def create_button(row, col):
             state['buttons'][col][row].config(image=off) 
             state['button_values'][col][row] = False 
         else:
-            notefuncs[f'note{row}']()
             state['buttons'][col][row].config(image=on)
             state['button_values'][col][row] = True
+            notefuncs[f'note{row}']()
     return tk.Button(root, text=notes[row],
                      command=toggle_button, bg='white', 
                      image=off, compound=LEFT, bd=0)
@@ -62,11 +80,10 @@ bpm_label = Label(root, text="BPM")
 bpm_label.grid(row=0, column=param_col)
 bpm_box = Entry(root)
 bpm_box.grid(row=1, column=param_col)
-play_button = Button(root, text="play")
+play_button= Button(root, text="stop/start", command=starttimer)
 play_button.grid(row=2, column=param_col)
-stop_button = Button(root, text="stop")
+stop_button= Button(root, text="stop", command=stoptimer)
 stop_button.grid(row=3, column=param_col)
-
 #bit of extra code required for the NN button as it needs to be toggleable
 nn_state = False
 def nn_toggle():
