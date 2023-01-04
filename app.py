@@ -9,20 +9,18 @@ import time
 # import sound files and load into unique functions
 sounds = []
 for i in range(8):
-    sounds.append(f'drum_sounds/{i+1}.wav')
+    sounds.append(AudioSegment.from_file(f'drum_sounds/{i+1}.wav'))
 for i in range(len(sounds)):
     print(sounds[i])
-def playnote(url):
-    sound = AudioSegment.from_wav(url)
+def playnote(sound):
     play(sound)
-
 #notes array, for labelling buttons
 notes = ["c3", "c#3", "d3", "d#3", "e3", "f3",
          "f#3", "g3"]
 
 # dict of various note functions (must be initalised as so, cannot pass arguements through button command)
 notefuncs = {f'note{i}': partial(
-    playnote, url=sounds[i]) for i in range(len(sounds))}
+    playnote, sound=sounds[i]) for i in range(len(sounds))}
 
 #dict to store buttons and button states (on or off)
 state = {'buttons': [], 'button_values': [[
@@ -32,24 +30,132 @@ state = {'buttons': [], 'button_values': [[
 step = 0
 currentstep = []
 def step1():
+    mixed = AudioSegment 
+    temp = None 
+    isstep = False
+    for j in range(len(sounds)):
+        if state['button_values'][0][j] == True:
+            isstep = True
+            if temp != None:
+                mixed = sounds[j].overlay(temp)
+            if temp == None:
+                mixed = sounds[j]
+            temp = sounds[j]
     stepmarker.grid(row=len(sounds)+1,column=0)
+    if isstep:
+        play(mixed)
 def step2():
+    mixed = AudioSegment 
+    temp = None 
+    isstep = False
+    for j in range(len(sounds)):
+        if state['button_values'][1][j] == True:
+            isstep = True
+            if temp != None:
+                mixed = sounds[j].overlay(temp)
+            if temp == None:
+                mixed = sounds[j]
+            temp = sounds[j]
     stepmarker.grid(row=len(sounds)+1,column=1)
+    if isstep:
+        play(mixed)
 def step3():
+    mixed = AudioSegment 
+    temp = None 
+    isstep = False
+    for j in range(len(sounds)):
+        if state['button_values'][2][j] == True:
+            isstep = True
+            if temp != None:
+                mixed = sounds[j].overlay(temp)
+            if temp == None:
+                mixed = sounds[j]
+            temp = sounds[j]
     stepmarker.grid(row=len(sounds)+1,column=2)
+    if isstep:
+        play(mixed)
 def step4():
+    mixed = AudioSegment 
+    temp = None 
+    isstep = False
+    for j in range(len(sounds)):
+        if state['button_values'][3][j] == True:
+            isstep = True
+            if temp != None:
+                mixed = sounds[j].overlay(temp)
+            if temp == None:
+                mixed = sounds[j]
+            temp = sounds[j]
     stepmarker.grid(row=len(sounds)+1,column=3)
+    if isstep:
+        play(mixed)
 def step5():
+    mixed = AudioSegment 
+    temp = None 
+    isstep = False
+    for j in range(len(sounds)):
+        if state['button_values'][4][j] == True:
+            isstep = True
+            if temp != None:
+                mixed = sounds[j].overlay(temp)
+            if temp == None:
+                mixed = sounds[j]
+            temp = sounds[j]
     stepmarker.grid(row=len(sounds)+1,column=4)
+    if isstep:
+        play(mixed)
 def step6():
+    mixed = AudioSegment 
+    temp = None 
+    isstep = False
+    for j in range(len(sounds)):
+        if state['button_values'][5][j] == True:
+            isstep = True
+            if temp != None:
+                mixed = sounds[j].overlay(temp)
+            if temp == None:
+                mixed = sounds[j]
+            temp = sounds[j]
     stepmarker.grid(row=len(sounds)+1,column=5)
+    if isstep:
+        play(mixed)
 def step7():
+    mixed = AudioSegment 
+    temp = None 
+    isstep = False
+    for j in range(len(sounds)):
+        if state['button_values'][6][j] == True:
+            isstep = True
+            if temp != None:
+                mixed = sounds[j].overlay(temp)
+            if temp == None:
+                mixed = sounds[j]
+            temp = sounds[j]
     stepmarker.grid(row=len(sounds)+1,column=6)
+    if isstep:
+        play(mixed)
 def step8():
+    mixed = AudioSegment 
+    temp = None 
+    isstep = False
+    for j in range(len(sounds)):
+        if state['button_values'][7][j] == True:
+            isstep = True
+            if temp != None:
+                mixed = sounds[j].overlay(temp)
+            if temp == None:
+                mixed = sounds[j]
+            temp = sounds[j]
     stepmarker.grid(row=len(sounds)+1,column=7)
+    if isstep:
+        play(mixed)
 
 stepfunctions =[step1,step2,step3,step4,step5,step6,step7,step8]
-
+bpmms = 500
+def getbpm():
+    bpm = int(bpm_box.get())
+    bpmms = (60000 / bpm) / 2
+    print(bpmms)
 def starttimer(first=True):
     global step
     if first:
@@ -96,8 +202,8 @@ for i in range(8):
     
 #sequencer parameters
 param_col = len(sounds)+1
-bpm_label = Label(root, text="BPM")
-bpm_label.grid(row=0, column=param_col)
+bpm_button = Button(root, text="BPM Submit", command=getbpm)
+bpm_button.grid(row=0, column=param_col)
 bpm_box = Entry(root)
 bpm_box.grid(row=1, column=param_col)
 play_button= Button(root, text="stop/start", command=starttimer)
