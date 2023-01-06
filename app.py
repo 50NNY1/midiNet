@@ -8,12 +8,16 @@ import os
 import time
 # import sound files and load into unique functions
 sounds = []
+
 for i in range(8):
     sounds.append(AudioSegment.from_file(f'drum_sounds/{i+1}.wav'))
+
 for i in range(len(sounds)):
     print(sounds[i])
+
 def playnote(sound):
     play(sound)
+
 #notes array, for labelling buttons
 notes = ["c3", "c#3", "d3", "d#3", "e3", "f3",
          "f#3", "g3"]
@@ -29,6 +33,7 @@ state = {'buttons': [], 'button_values': [[
 #timer functions for sequencing
 step = 0
 currentstep = []
+
 def step1():
     mixed = AudioSegment 
     temp = None 
@@ -151,7 +156,31 @@ def step8():
         play(mixed)
 
 stepfunctions =[step1,step2,step3,step4,step5,step6,step7,step8]
-bpmms = 500
+#ts1 = Thread(target=step1)
+#ts2 = Thread(target=step2)
+#ts3 = Thread(target=step3)
+#ts4 = Thread(target=step4)
+#ts5 = Thread(target=step5)
+#ts6 = Thread(target=step6)
+#ts7 = Thread(target=step7)
+#ts8 = Thread(target=step8)
+#ts1.start()
+#ts2.start()
+#ts3.start()
+#ts4.start()
+#ts5.start()
+#ts6.start()
+#ts7.start()
+#ts8.start()
+#ts1.join()
+#ts2.join()
+#ts3.join()
+#ts4.join()
+#ts5.join()
+#ts6.join()
+#ts7.join()
+#ts8.join()
+#bpmms = 500
 def getbpm():
     bpm = int(bpm_box.get())
     bpmms = (60000 / bpm) / 2
@@ -187,6 +216,8 @@ def create_button(row, col):
             state['buttons'][col][row].config(image=on)
             state['button_values'][col][row] = True
             notefuncs[f'note{row}']()
+            #tnote.start()
+            #tnote.join()
     return tk.Button(root, text=notes[row],
                      command=toggle_button, bg='white', 
                      image=off, compound=LEFT, bd=0)
