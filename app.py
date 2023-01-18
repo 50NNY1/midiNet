@@ -1,4 +1,5 @@
 import tkinter as tk 
+import threading
 from tkinter import * 
 from functools import partial 
 from typing import List 
@@ -8,179 +9,42 @@ import os
 import time
 # import sound files and load into unique functions
 sounds = []
-
 for i in range(8):
     sounds.append(AudioSegment.from_file(f'drum_sounds/{i+1}.wav'))
-
 for i in range(len(sounds)):
     print(sounds[i])
-
 def playnote(sound):
     play(sound)
-
 #notes array, for labelling buttons
 notes = ["c3", "c#3", "d3", "d#3", "e3", "f3",
          "f#3", "g3"]
-
 # dict of various note functions (must be initalised as so, cannot pass arguements through button command)
 notefuncs = {f'note{i}': partial(
     playnote, sound=sounds[i]) for i in range(len(sounds))}
-
 #dict to store buttons and button states (on or off)
 state = {'buttons': [], 'button_values': [[
     False for i in range(len(sounds))]for i in range(8)]}
-
 #timer functions for sequencing
 step = 0
 currentstep = []
-
-def step1():
-    mixed = AudioSegment 
-    temp = None 
+#step functions
+def stepfunc(step_num):
+    mixed = AudioSegment
+    temp = None
     isstep = False
     for j in range(len(sounds)):
-        if state['button_values'][0][j] == True:
+        if state['button_values'][step_num][j] == True:
             isstep = True
             if temp != None:
                 mixed = sounds[j].overlay(temp)
             if temp == None:
                 mixed = sounds[j]
             temp = sounds[j]
-    stepmarker.grid(row=len(sounds)+1,column=0)
+    stepmarker.grid(row=len(sounds)+1)
     if isstep:
-        play(mixed)
-def step2():
-    mixed = AudioSegment 
-    temp = None 
-    isstep = False
-    for j in range(len(sounds)):
-        if state['button_values'][1][j] == True:
-            isstep = True
-            if temp != None:
-                mixed = sounds[j].overlay(temp)
-            if temp == None:
-                mixed = sounds[j]
-            temp = sounds[j]
-    stepmarker.grid(row=len(sounds)+1,column=1)
-    if isstep:
-        play(mixed)
-def step3():
-    mixed = AudioSegment 
-    temp = None 
-    isstep = False
-    for j in range(len(sounds)):
-        if state['button_values'][2][j] == True:
-            isstep = True
-            if temp != None:
-                mixed = sounds[j].overlay(temp)
-            if temp == None:
-                mixed = sounds[j]
-            temp = sounds[j]
-    stepmarker.grid(row=len(sounds)+1,column=2)
-    if isstep:
-        play(mixed)
-def step4():
-    mixed = AudioSegment 
-    temp = None 
-    isstep = False
-    for j in range(len(sounds)):
-        if state['button_values'][3][j] == True:
-            isstep = True
-            if temp != None:
-                mixed = sounds[j].overlay(temp)
-            if temp == None:
-                mixed = sounds[j]
-            temp = sounds[j]
-    stepmarker.grid(row=len(sounds)+1,column=3)
-    if isstep:
-        play(mixed)
-def step5():
-    mixed = AudioSegment 
-    temp = None 
-    isstep = False
-    for j in range(len(sounds)):
-        if state['button_values'][4][j] == True:
-            isstep = True
-            if temp != None:
-                mixed = sounds[j].overlay(temp)
-            if temp == None:
-                mixed = sounds[j]
-            temp = sounds[j]
-    stepmarker.grid(row=len(sounds)+1,column=4)
-    if isstep:
-        play(mixed)
-def step6():
-    mixed = AudioSegment 
-    temp = None 
-    isstep = False
-    for j in range(len(sounds)):
-        if state['button_values'][5][j] == True:
-            isstep = True
-            if temp != None:
-                mixed = sounds[j].overlay(temp)
-            if temp == None:
-                mixed = sounds[j]
-            temp = sounds[j]
-    stepmarker.grid(row=len(sounds)+1,column=5)
-    if isstep:
-        play(mixed)
-def step7():
-    mixed = AudioSegment 
-    temp = None 
-    isstep = False
-    for j in range(len(sounds)):
-        if state['button_values'][6][j] == True:
-            isstep = True
-            if temp != None:
-                mixed = sounds[j].overlay(temp)
-            if temp == None:
-                mixed = sounds[j]
-            temp = sounds[j]
-    stepmarker.grid(row=len(sounds)+1,column=6)
-    if isstep:
-        play(mixed)
-def step8():
-    mixed = AudioSegment 
-    temp = None 
-    isstep = False
-    for j in range(len(sounds)):
-        if state['button_values'][7][j] == True:
-            isstep = True
-            if temp != None:
-                mixed = sounds[j].overlay(temp)
-            if temp == None:
-                mixed = sounds[j]
-            temp = sounds[j]
-    stepmarker.grid(row=len(sounds)+1,column=7)
-    if isstep:
-        play(mixed)
-
-stepfunctions =[step1,step2,step3,step4,step5,step6,step7,step8]
-#ts1 = Thread(target=step1)
-#ts2 = Thread(target=step2)
-#ts3 = Thread(target=step3)
-#ts4 = Thread(target=step4)
-#ts5 = Thread(target=step5)
-#ts6 = Thread(target=step6)
-#ts7 = Thread(target=step7)
-#ts8 = Thread(target=step8)
-#ts1.start()
-#ts2.start()
-#ts3.start()
-#ts4.start()
-#ts5.start()
-#ts6.start()
-#ts7.start()
-#ts8.start()
-#ts1.join()
-#ts2.join()
-#ts3.join()
-#ts4.join()
-#ts5.join()
-#ts6.join()
-#ts7.join()
-#ts8.join()
-#bpmms = 500
+        playnote(mixed)
+#bpm
+bpmms = 500
 def getbpm():
     bpm = int(bpm_box.get())
     bpmms = (60000 / bpm) / 2
@@ -195,7 +59,8 @@ def starttimer(first=True):
         step += 1
         if step == 8:
             step = 0
-        stepfunctions[step-1]()
+        print(step)
+        stepfunc(step)
         play_button.after(500, starttimer, False)
 def stoptimer():
     global step
@@ -203,6 +68,7 @@ def stoptimer():
     step = 0
 # build gui
 root = tk.Tk()
+
 on = PhotoImage(file="images/on.png")
 off = PhotoImage(file="images/off.png")
 marker = PhotoImage(file="images/step.png")
@@ -216,8 +82,6 @@ def create_button(row, col):
             state['buttons'][col][row].config(image=on)
             state['button_values'][col][row] = True
             notefuncs[f'note{row}']()
-            #tnote.start()
-            #tnote.join()
     return tk.Button(root, text=notes[row],
                      command=toggle_button, bg='white', 
                      image=off, compound=LEFT, bd=0)
