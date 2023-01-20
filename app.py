@@ -29,12 +29,14 @@ state = {'buttons': [], 'button_values': [[
 step = 0
 currentstep = []
 #step functions
-def stepfunc(step_num):
-    mixed = b''
-    temp = None
+def stepfunc():
+    global step
     for j in range(len(sounds)):
-        if state['button_values'][step_num][j] == True:
-            playnote(mixed)
+        if state['button_values'][step][j] == True:
+            playnote(sounds[j])
+        step+=1
+        if step == 8:
+            step = 0    
     stepmarker.grid(row=len(sounds)+1)
 #bpm
 bpmms = 500
@@ -43,16 +45,11 @@ def getbpm():
     bpmms = (60000 / bpm) / 2
     print(bpmms)
 def starttimer(first=True):
-    global step
     if first:
         play_button['state'] = tk.DISABLED
         play_button.update_idletasks()
-        step = 0
     if play_button['state'] == tk.DISABLED:
-        step += 1
-        if step == 8:
-            step = 0
-        stepfunc(step)
+        stepfunc()
         play_button.after(500, starttimer, False)
 def stoptimer():
     global step
@@ -94,7 +91,7 @@ bpm_button = Button(root, text="BPM Submit", command=getbpm)
 bpm_button.grid(row=0, column=param_col)
 bpm_box = Entry(root)
 bpm_box.grid(row=1, column=param_col)
-play_button= Button(root, text="stop/start", command=starttimer)
+play_button= Button(root, text="start", command=starttimer)
 play_button.grid(row=2, column=param_col)
 stop_button= Button(root, text="stop", command=stoptimer)
 stop_button.grid(row=3, column=param_col)
