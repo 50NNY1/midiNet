@@ -1,20 +1,21 @@
 import tkinter as tk 
-import threading
 from tkinter import * 
 from functools import partial 
 from typing import List 
-from pydub import AudioSegment 
-from pydub.playback import play
 import os
+import librosa
+import sounddevice as sd
 import time
 # import sound files and load into unique functions
 sounds = []
 for i in range(8):
-    sounds.append(AudioSegment.from_file(f'drum_sounds/{i+1}.wav'))
-for i in range(len(sounds)):
-    print(sounds[i])
+    sounds.append(f'drum_sounds/{i+1}.wav')
 def playnote(sound):
-    play(sound)
+    y, sr = librosa.load(sound, sr=None, mono=True)
+    sd.play(y,sr)
+    time.sleep(librosa.get_duration(y,sr))
+    sd.stop()
+
 #notes array, for labelling buttons
 notes = ["c3", "c#3", "d3", "d#3", "e3", "f3",
          "f#3", "g3"]
@@ -29,20 +30,12 @@ step = 0
 currentstep = []
 #step functions
 def stepfunc(step_num):
-    mixed = AudioSegment
+    mixed = b''
     temp = None
-    isstep = False
     for j in range(len(sounds)):
         if state['button_values'][step_num][j] == True:
-            isstep = True
-            if temp != None:
-                mixed = sounds[j].overlay(temp)
-            if temp == None:
-                mixed = sounds[j]
-            temp = sounds[j]
+            playnote(mixed)
     stepmarker.grid(row=len(sounds)+1)
-    if isstep:
-        playnote(mixed)
 #bpm
 bpmms = 500
 def getbpm():
@@ -59,16 +52,16 @@ def starttimer(first=True):
         step += 1
         if step == 8:
             step = 0
-        print(step)
         stepfunc(step)
         play_button.after(500, starttimer, False)
 def stoptimer():
     global step
     play_button['state'] = tk.NORMAL
     step = 0
-# build gui
+
 root = tk.Tk()
 
+#images
 on = PhotoImage(file="images/on.png")
 off = PhotoImage(file="images/off.png")
 marker = PhotoImage(file="images/step.png")
@@ -123,5 +116,6 @@ nn = Button(root, text="neural net", command=nn_toggle,
             bg="white", image=off, compound=LEFT, bd=0)
 nn.grid(row=4, column=param_col)
 
-#render graphics             
 root.mainloop()
+
+
