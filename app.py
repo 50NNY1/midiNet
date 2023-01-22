@@ -10,10 +10,11 @@ import time
 
 sounds = []
 for i in range(8):
-    sounds.append(f'drum_sounds/{i+1}.wav')
+    url = (f'drum_sounds/{i+1}.wav')
+    arr, samplerate = librosa.load(url, sr=None, mono=True)
+    sounds.append({'arr': arr, 'samplerate': samplerate})
 
-def playnote(sound):
-    arr, samplerate = librosa.load(sound, sr=None, mono=True)
+def playnote(arr,samplerate):
     sd.play(arr,samplerate)
     time.sleep(librosa.get_duration(y=arr,sr=samplerate))
     sd.stop()
@@ -22,7 +23,7 @@ notes = ["c3", "c#3", "d3", "d#3", "e3", "f3",
          "f#3", "g3"]
 
 notefuncs = {f'note{i}': partial(
-    playnote, sound=sounds[i]) for i in range(len(sounds))}
+    playnote, arr=sounds[i]['arr'], samplerate=sounds[i]['samplerate']) for i in range(len(sounds))}
 
 state = {'buttons': [], 'button_values': [[
     False for i in range(len(sounds))]for i in range(8)]}
@@ -35,7 +36,7 @@ def stepfunc():
     stepmarker.grid(row=len(sounds)+1,column=step)
     for j in range(len(sounds)):
         if state['button_values'][step][j] == True:
-            playnote(sounds[j])
+            notefuncs[f'note{j}']()
     step+=1
     if step == 8:
         step = 0    
