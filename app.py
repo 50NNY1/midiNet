@@ -1,9 +1,9 @@
 import tkinter as tk 
+import numpy as np
 from tkinter import * 
 from functools import partial 
 from typing import List 
 import os
-import threading
 import librosa
 import sounddevice as sd
 import time
@@ -17,13 +17,14 @@ for i in range(8):
 def playnote(arr,samplerate):
     sd.play(arr,samplerate)
     time.sleep(librosa.get_duration(y=arr,sr=samplerate))
-    sd.stop()
+    sd.wait()
 
 notes = ["c3", "c#3", "d3", "d#3", "e3", "f3",
          "f#3", "g3"]
 
 notefuncs = {f'note{i}': partial(
-    playnote, arr=sounds[i]['arr'], samplerate=sounds[i]['samplerate']) for i in range(len(sounds))}
+    playnote, arr=sounds[i]['arr'], 
+    samplerate=sounds[i]['samplerate']) for i in range(len(sounds))}
 
 state = {'buttons': [], 'button_values': [[
     False for i in range(len(sounds))]for i in range(8)]}
@@ -31,16 +32,24 @@ state = {'buttons': [], 'button_values': [[
 step = 0
 currentstep = []
 
+#short term fourier transforms dictionary for audio overlay
+stft_data = {i: librosa.core.stft(audio) for i, audio in enumerate(
+    [obj['arr']for obj in sounds])}
 def stepfunc():
     global step 
     stepmarker.grid(row=len(sounds)+1,column=step)
-    for j in range(len(sounds)):
-        if state['button_values'][step][j] == True:
-            notefuncs[f'note{j}']()
-    step+=1
+    stepindexes = [i for i, x in enumerate(state['button_values'][step]) if x]
+    combinedaudio = stft_data[0]
+    for i in range(1, len(stepindexes)):
+        stft_padded = librosa.util.fix_length(stft_data[stepindexes[i]], 
+                                              size=combinedaudio.shape[1]) 
+        combinedaudio = combinedaudio + stft_padded 
+    overlayedaudio = librosa.core.istft(combinedaudio)
+    sd.play(overlayedaudio, sounds[0]['samplerate'])
+    sd.wait()
+    step += 1
     if step == 8:
-        step = 0    
-
+        step = 0
 def getbpm():
     bpm = int(bpm_box.get())
     bpmms = (60000 / bpm) / 2
