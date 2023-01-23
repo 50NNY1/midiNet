@@ -17,7 +17,7 @@ for i in range(8):
 
 def playnote(arr, samplerate):
     sd.play(arr, samplerate)
-    time.sleep(librosa.get_duration(y=arr, sr=samplerate))
+    # time.sleep(librosa.get_duration(y=arr, sr=samplerate))
     # sd.wait()
 
 
@@ -54,6 +54,9 @@ def stepfunc():
         # sd.wait()
     step += 1
     if step == 8:
+        if nn_state:
+            # call predict to get next pattern
+            print(state['button_values'].astype(int))
         step = 0
 
 
@@ -129,7 +132,7 @@ def nn_toggle():
         nn.config(image=on)
         nn_state = True
 
-        # call predict here!
+
 nn = Button(root, text="neural net", command=nn_toggle,
             bg="white", image=off, compound=LEFT, bd=0)
 nn.grid(row=3, column=param_col)
