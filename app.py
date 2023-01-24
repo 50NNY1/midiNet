@@ -3,6 +3,9 @@ import numpy as np
 from tkinter import *
 from functools import partial
 from typing import List
+import tensorflow as tf
+from tensorflow import keras
+from tensorflow.keras.models import load_model
 import os
 import librosa
 import sounddevice as sd
@@ -38,6 +41,8 @@ currentstep = []
 stft_data = {i: librosa.core.stft(audio) for i, audio in enumerate(
     [obj['arr']for obj in sounds])}
 
+model = load_model('model.h5')
+
 
 def stepfunc():
     global step
@@ -55,8 +60,16 @@ def stepfunc():
     step += 1
     if step == 8:
         if nn_state:
-            # call predict to get next pattern
-            print(state['button_values'].astype(int))
+            curseq = np.array(state['button_values']).astype(float)
+            pred = model.predict(curseq.reshape(1, 8, 8))
+            print(pred[0].astype(bool))
+            state['button_values'] = pred[0].astype(bool)
+            for i in range(8):
+                for j in range(len(sounds)):
+                    if pred[0][i][j].astype == True:
+                        state['buttons'][i][j].config(image=off)
+                    else:
+                        state['buttons'][i][j].config(image=on)
         step = 0
 
 
