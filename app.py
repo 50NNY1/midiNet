@@ -62,14 +62,21 @@ def stepfunc():
         if nn_state:
             curseq = np.array(state['button_values']).astype(float)
             pred = model.predict(curseq.reshape(1, 8, 8))
-            print(pred[0].astype(bool))
-            state['button_values'] = pred[0].astype(bool)
+            min_val = np.min(pred)
+            max_val = np.max(pred)
+            range_val = max_val - min_val
+            scaled_arr = (pred - min_val) / range_val
+            scaled_arr = np.round(scaled_arr)
+            scaled_arr = scaled_arr[0].astype(bool)
+            print(scaled_arr)
             for i in range(8):
                 for j in range(len(sounds)):
-                    if pred[0][i][j].astype == True:
-                        state['buttons'][i][j].config(image=off)
-                    else:
+                    if scaled_arr[i][j] == True:
                         state['buttons'][i][j].config(image=on)
+                        state['button_values'][i][j] = True
+                    else:
+                        state['buttons'][i][j].config(image=off)
+                        state['button_values'][i][j] = False
         step = 0
 
 
