@@ -11,6 +11,7 @@ import librosa
 import sounddevice as sd
 import time
 
+# loading and storing audio for demonstration/playback purposes
 sounds = []
 for i in range(8):
     url = (f'drum_sounds/{i+1}.wav')
@@ -18,19 +19,21 @@ for i in range(8):
     sounds.append({'arr': arr, 'samplerate': samplerate})
 
 
+# simple function to be called from the notefuncs dictionary
 def playnote(arr, samplerate):
     sd.play(arr, samplerate)
-    # time.sleep(librosa.get_duration(y=arr, sr=samplerate))
-    # sd.wait()
 
 
 notes = ["c3", "c#3", "d3", "d#3", "e3", "f3",
          "f#3", "g3"]
 
+# dictionary of functions created iteratively, to play all the different sounds that build up the drum sequencer
 notefuncs = {f'note{i}': partial(
     playnote, arr=sounds[i]['arr'],
     samplerate=sounds[i]['samplerate']) for i in range(len(sounds))}
 
+# dictionary containing one array of gui elements, the other of boolean values -
+# used to store the user inputted, and predicted sequences of the sequencer.
 state = {'buttons': [], 'button_values': [[
     False for i in range(len(sounds))]for i in range(8)]}
 
@@ -51,24 +54,25 @@ def stepfunc():
     if len(stepindexes) > 0:
         combinedaudio = stft_data[stepindexes[0]]
         for i in range(1, len(stepindexes)):
+            # ensure all stft arrays are the same length
             stft_padded = librosa.util.fix_length(stft_data[stepindexes[i]],
                                                   size=combinedaudio.shape[1])
+            # sum the stft arrays
             combinedaudio = combinedaudio + stft_padded
         overlayedaudio = librosa.core.istft(combinedaudio)
         sd.play(overlayedaudio, sounds[0]['samplerate'])
-        # sd.wait()
     step += 1
     if step == 8:
         if nn_state:
             curseq = np.array(state['button_values']).astype(float)
             pred = model.predict(curseq.reshape(1, 8, 8))
+            # scale the prediction to 0-1, round to 0 or 1, and convert to boolean
             min_val = np.min(pred)
             max_val = np.max(pred)
             range_val = max_val - min_val
             scaled_arr = (pred - min_val) / range_val
             scaled_arr = np.round(scaled_arr)
             scaled_arr = scaled_arr[0].astype(bool)
-            print(scaled_arr)
             for i in range(8):
                 for j in range(len(sounds)):
                     if scaled_arr[i][j] == True:
@@ -103,7 +107,6 @@ def stoptimer():
 
 root = tk.Tk()
 
-# images
 on = PhotoImage(file="images/on.png")
 off = PhotoImage(file="images/off.png")
 marker = PhotoImage(file="images/step.png")
@@ -123,6 +126,7 @@ def create_button(row, col):
                      image=off, compound=LEFT, bd=0)
 
 
+# iteratively create the buttons and add them to the state dictionary
 for i in range(8):
     button_row = []
     for j in range(len(sounds)):
@@ -131,6 +135,7 @@ for i in range(8):
         button_row.append(button)
     state['buttons'].append(button_row)
 
+# using tkinter's grid functionality, instantiate and place all the gui elements
 param_col = len(sounds)+1
 bpm_box = Entry(root)
 bpm_box.grid(row=0, column=param_col)
@@ -157,4 +162,5 @@ nn = Button(root, text="neural net", command=nn_toggle,
             bg="white", image=off, compound=LEFT, bd=0)
 nn.grid(row=3, column=param_col)
 
+# declare gui thread
 root.mainloop()
